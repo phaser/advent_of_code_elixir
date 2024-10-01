@@ -59,6 +59,12 @@ defmodule Mix.Tasks.Advent.Generate.Day do
 
     # Do your work here and return an updated igniter
     igniter
+    |> Igniter.assign(
+      day_module_name: day_module_name,
+      full_day_number: full_day_number,
+      day: day,
+      year: year
+    )
     |> Igniter.Code.Module.create_module(day_module_name, """
       def part1(args) do
         args
@@ -68,6 +74,8 @@ defmodule Mix.Tasks.Advent.Generate.Day do
         args
       end
     """)
+    |> add_mix_task(1)
+    |> add_mix_task(2)
     |> Igniter.Code.Module.create_module(test_module_name, """
       use ExUnit.Case
 
@@ -90,6 +98,29 @@ defmodule Mix.Tasks.Advent.Generate.Day do
       end
     """,
     path: Igniter.Code.Module.proper_test_location(test_module_name))
+  end
+
+  defp add_mix_task(igniter, part) do
+    template_path = Path.expand("templates/day_mix_task.eex")
+
+    part_module_name =
+      Igniter.Code.Module.parse(
+        "Mix.Tasks.Y#{igniter.assigns[:year]}.D#{igniter.assigns[:full_day_number]}.P#{part}"
+      )
+
+    assigns =
+      Keyword.merge(
+        Map.to_list(igniter.assigns),
+        part: part,
+        module_name: part_module_name
+      )
+
+    Igniter.copy_template(
+      igniter,
+      template_path,
+      Igniter.Code.Module.proper_location(part_module_name),
+      assigns
+    )
   end
 
   defp advent_day(nil) do
