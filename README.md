@@ -17,4 +17,5 @@ The input is downloaded automatically if the session cookie is set in environmen
 ```powershell
 $env:ADVENT_OF_CODE_SESSION_COOKIE="session_cookie"
 mix y2015.d01.p1
+mix y2015.d01.p1 -b # if you want to benchmark the code
 ```
