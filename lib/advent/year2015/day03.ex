@@ -1,22 +1,26 @@
 defmodule Advent.Year2015.Day03 do
   def part1(args) do
-    solution = args
-    |> String.graphemes
-    |> solution([{0, 0}])
+    solution =
+      args
+      |> String.graphemes
+      |> solution([{0, 0}])
     solution.count
   end
 
   def part2(args) do
-    lists = args
-    |> String.graphemes
-    |> Enum.with_index
-    |> Enum.split_with(fn x -> rem(elem(x, 1), 2) == 0 end)
-    solution1 = elem(lists, 0)
-    |> Enum.map(fn x -> elem(x, 0) end)
-    |> solution([{0, 0}])
-    solution2 = elem(lists, 1)
-    |> Enum.map(fn x -> elem(x, 0) end)
-    |> solution(solution1.visited_positions |> MapSet.to_list)
+    lists =
+      args
+      |> String.graphemes
+      |> Enum.with_index
+      |> Enum.split_with(fn x -> rem(elem(x, 1), 2) == 0 end)
+    solution1 =
+      elem(lists, 0)
+      |> Enum.map(fn x -> elem(x, 0) end)
+      |> solution([{0, 0}])
+    solution2 =
+      elem(lists, 1)
+      |> Enum.map(fn x -> elem(x, 0) end)
+      |> solution(solution1.visited_positions |> MapSet.to_list)
     solution1.count + solution2.count - 1
   end
 
