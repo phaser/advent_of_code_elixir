@@ -52,6 +52,26 @@ defmodule Advent.Year2015.Day06 do
   end
 
   def part2(commands) do
-    commands
+    parsed_commands = commands
+    |> String.split("\n")
+    |> Enum.filter(fn l -> l != "" end)
+    |> Enum.map(&parse_command/1)
+    light_list = for x <- Range.new(0, 999), y <- Range.new(0, 999), do: {{x, y}, 0}
+    lights_map = Map.new(light_list)
+    parsed_commands
+    |> Enum.reduce(lights_map, fn x, acc ->
+      case x do
+        {"turnon", x1, y1, x2, y2} ->
+          lights = for x <- Range.new(x1, x2), y <- Range.new(y1, y2), do: {x, y}
+          lights |> Enum.reduce(acc, fn x, map -> Map.get_and_update!(map, x, fn light_intensity -> {light_intensity, light_intensity + 1} end) |> elem(1) end)
+        {"turnoff", x1, y1, x2, y2} ->
+          lights = for x <- Range.new(x1, x2), y <- Range.new(y1, y2), do: {x, y}
+          lights |> Enum.reduce(acc, fn x, map -> Map.get_and_update!(map, x, fn light_intensity -> {light_intensity, Enum.max([light_intensity - 1, 0])} end) |> elem(1) end)
+        {"toggle", x1, y1, x2, y2} ->
+          lights = for x <- Range.new(x1, x2), y <- Range.new(y1, y2), do: {x, y}
+          lights |> Enum.reduce(acc, fn x, map -> Map.get_and_update!(map, x, fn light_intensity -> {light_intensity, light_intensity + 2} end) |> elem(1) end)
+      end
+    end)
+    |> Enum.reduce(0, fn x, sum -> sum + elem(x, 1) end)
   end
 end
