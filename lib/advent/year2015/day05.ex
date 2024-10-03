@@ -27,7 +27,11 @@ defmodule Advent.Year2015.Day05 do
     |> Enum.reduce_while(%{count: 0, pairs: pairs}, fn x, acc ->
       if x in (acc.pairs |> Enum.drop(2)), do: {:halt, %{acc | count: 1}}, else: {:cont, %{acc | pairs: (acc.pairs |> Enum.drop(1))}}
     end)).count > 0
-    triads = graphemes |> Enum.zip(graphemes |> Enum.drop(1)) |> Enum.zip(graphemes |> Enum.drop(2)) |> Enum.map(fn x -> "#{elem(elem(x, 0), 0)}#{elem(elem(x, 0), 1)}#{elem(x, 1)}" end)
+    triads =
+      graphemes
+      |> Enum.zip(graphemes |> Enum.drop(1))
+      |> Enum.zip(graphemes |> Enum.drop(2))
+      |> Enum.map(fn x -> "#{elem(elem(x, 0), 0)}#{elem(elem(x, 0), 1)}#{elem(x, 1)}" end)
     rule2 =
       triads
       |> Enum.any?(fn t -> String.at(t, 0) == String.at(t, 2) end)
