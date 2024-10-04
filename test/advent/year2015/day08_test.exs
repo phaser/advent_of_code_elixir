@@ -6,14 +6,11 @@ defmodule Advent.Year2015.Day08Test do
 
   test "part1" do
     result = part1(File.read!(Path.join([@input_path, "day08_test_input.p1.txt"])))
-    assert result == 13
+    assert result == 12
   end
 
-  @tag :skip
   test "part2" do
-    input = nil
-    result = part2(input)
-
-    assert result
+    result = part2(File.read!(Path.join([@input_path, "day08_test_input.p1.txt"])))
+    assert result == 19
   end
 end
