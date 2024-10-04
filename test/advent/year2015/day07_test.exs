@@ -16,14 +16,6 @@ defmodule Advent.Year2015.Day07Test do
     """
     result = part1(input)
 
-    assert result
-  end
-
-  @tag :skip
-  test "part2" do
-    input = nil
-    result = part2(input)
-
-    assert result
+    assert :binary.decode_unsigned(result["h"]) == 65412
   end
 end

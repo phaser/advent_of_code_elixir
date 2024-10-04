@@ -12,6 +12,8 @@ defmodule Elixir.Mix.Tasks.Y2015.D07.P1 do
       else:
         input
         |> part1()
+        |> Map.get("a")
+        |> :binary.decode_unsigned()
         |> IO.inspect(label: "Part 1 Results")
   end
 end
