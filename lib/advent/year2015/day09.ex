@@ -4,20 +4,7 @@ defmodule Advent.Year2015.Day09 do
   defp parse_distance(line) do
     [city1, "to", city2, "=", dist] = line |> String.split(" ")
     {dist_value, _} = Integer.parse(dist)
-    [{{city1, city2}, dist_value}, {{city1, city2}, dist_value}]
-  end
-
-  defp get_dist(distMap, c1, c2) do
-    if c1 == c2 do
-      0
-    else
-      key = {c1, c2}
-      if Map.has_key?(distMap, key) do
-        Map.get(distMap, key)
-      else
-        @infinity
-      end
-    end
+    [%{:city1 => city1, :city2 => city2, :dist => dist_value}]
   end
 
   defp permutations([]), do: [[]]
@@ -25,48 +12,47 @@ defmodule Advent.Year2015.Day09 do
     for elem <- list, rest <- permutations(list -- [elem]), do: [elem | rest]
   end
 
+  defp parse_input(costs_input) do
+    costs_input
+    |> String.split("\n")
+    |> Enum.filter(fn s -> s != "" end)
+    |> Enum.flat_map(&parse_distance/1)
+    |> Enum.sort_by(&Map.get(&1, :dist))
+  end
+
+  defp get_cities_list(distsMap) do
+    distsMap
+    |> Enum.flat_map(fn x -> [x.city1, x.city2] end)
+    |> Enum.uniq()
+  end
+
   def part1(costs_input) do
-    distsMap =
-      costs_input
-      |> String.split("\n")
-      |> Enum.filter(fn s -> s != "" end)
-      |> Enum.map(&parse_distance/1)
-      |> Enum.flat_map(fn x -> x end)
-      |> Map.new
-
-    cities =
-      distsMap
-      |> Enum.reduce(MapSet.new(), fn x, acc ->
-        acc = MapSet.put(acc, elem(elem(x, 0), 0))
-        MapSet.put(acc, elem(elem(x, 0), 1))
-      end)
-      |> MapSet.to_list()
-      |> Enum.sort()
-
-    combinations = for k <- cities, i <- cities, j <- cities, do: {k, i, j}
-    distsMap = combinations
-    |> Enum.reduce(distsMap, fn x, map ->
-      k = elem(x, 0)
-      i = elem(x, 1)
-      j = elem(x, 2)
-      cdist = get_dist(map, i, j)
-      fd1 = get_dist(map, i, k)
-      fd2 = get_dist(map, k, j)
-      fd = min(min(cdist, fd1 + fd2), @infinity)
-      if @infinity != fd and fd != 0 do
-        Map.put(map, {i, j}, fd)
-      else
-        map
-      end
-    end)
+    distsMap = parse_input(costs_input)
+    cities = get_cities_list(distsMap)
 
     cities
     |> permutations()
-    |> Enum.map(fn p -> p |> Enum.zip(p |> Enum.drop(1)) |> Enum.reduce(0, fn x, sum -> (sum + get_dist(distsMap, elem(x, 0), elem(x, 1))) end) end)
+    |> Enum.map(fn p -> p |> Enum.zip(p |> Enum.drop(1)) |> Enum.reduce(0, fn x, sum ->
+      e = distsMap |> Enum.find(fn y -> (elem(x, 0) == y.city1 && elem(x, 1) == y.city2) || (elem(x, 0) == y.city2 && elem(x, 1) == y.city1) end)
+      dist = if e == nil, do: @infinity, else: e.dist
+      sum + dist
+    end)
+    end)
     |> Enum.min
   end
 
-  def part2(args) do
-    args
+  def part2(costs_input) do
+    distsMap = parse_input(costs_input)
+    cities = get_cities_list(distsMap)
+
+    cities
+    |> permutations()
+    |> Enum.map(fn p -> p |> Enum.zip(p |> Enum.drop(1)) |> Enum.reduce(0, fn x, sum ->
+      e = distsMap |> Enum.find(fn y -> (elem(x, 0) == y.city1 && elem(x, 1) == y.city2) || (elem(x, 0) == y.city2 && elem(x, 1) == y.city1) end)
+      dist = if e == nil, do: @infinity, else: e.dist
+      sum + dist
+    end)
+    end)
+    |> Enum.max
   end
 end
