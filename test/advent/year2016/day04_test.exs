@@ -14,12 +14,4 @@ defmodule Advent.Year2016.Day04Test do
 
     assert result == 1514
   end
-
-  @tag :skip
-  test "part2" do
-    input = nil
-    result = part2(input)
-
-    assert result
-  end
 end

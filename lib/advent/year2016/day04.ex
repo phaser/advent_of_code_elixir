@@ -31,7 +31,31 @@ defmodule Advent.Year2016.Day04 do
     |> Enum.sum()
   end
 
-  def part2(args) do
-    args
+  def part2(rooms) do
+    rooms |> String.split("\n") |> Enum.filter(fn x -> x != "" end)
+    |> Enum.map(&parse_room/1)
+    |> Enum.map(fn x ->
+      letters = x["letters"]
+      {id, _} = x["id"] |> Integer.parse()
+      bazid = rem(id, ?z - ?a + 1)
+      letters = letters
+      |> String.graphemes()
+      |> Enum.map(fn g ->
+        if g == "-" do
+          g
+        else
+          g
+          |> to_charlist()
+          |> Enum.map(fn cc ->
+            if cc + bazid > ?z, do: ?a + cc + bazid - ?z - 1, else: cc + bazid
+          end)
+          |> to_string()
+        end
+      end)
+      |> Enum.join
+      %{"id" => id, "letters" => letters}
+    end)
+    |> Enum.find(fn x -> x["letters"] == "northpole-object-storage-" end)
+    |> Map.get("id")
   end
 end
