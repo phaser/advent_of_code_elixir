@@ -12,12 +12,4 @@ defmodule Advent.Year2016.Day07Test do
 
     assert result == 1
   end
-
-  @tag :skip
-  test "part2" do
-    input = nil
-    result = part2(input)
-
-    assert result
-  end
 end
