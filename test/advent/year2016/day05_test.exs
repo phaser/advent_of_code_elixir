@@ -7,6 +7,6 @@ defmodule Advent.Year2016.Day05Test do
     input = "ffykfhsq"
     result = part1(input)
 
-    assert result == "18f47a30"
+    assert result == "c6697b55"
   end
 end
